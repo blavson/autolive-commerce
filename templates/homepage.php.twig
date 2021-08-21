@@ -1,1 +1,20 @@
-{{ greet }}
+{%  extends "base.html.twig" %}
+{% block body %}
+ {{ form(myform) }}
+{#    <select class="form-select" aria-label="Default select example">#}
+{#        <option selected>Car Makers</option>#}
+
+{#    {% for maker in makers %}#}
+{#        <option value={{ maker.getId() }}>{{ maker.getMaker() }}</option>#}
+{#    {%  endfor %}#}
+{#    </select>#}
+{%  endblock %}
+
+{% block bottomscript %}
+<script>
+    let makerSelect = document.homepage_form.homepage_form_car_makers;
+    makerSelect.addEventListener('change', (event) => {
+        console.log(event.target.value)
+    })
+</script>
+{% endblock %}
