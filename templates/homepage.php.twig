@@ -13,8 +13,46 @@
 {% block bottomscript %}
 <script>
     let makerSelect = document.homepage_form.homepage_form_car_makers;
-    makerSelect.addEventListener('change', (event) => {
-        console.log(event.target.value)
+    let modelSelect = document.homepage_form.homepage_form_car_models;
+
+      getData =async (event) => {
+          let maker_id = event.target.value;
+          let hpForm = document.homepage_form;
+          let hpAction = hpForm.action;
+          let hpMethod = hpForm.method;
+
+
+        const response = await fetch(hpAction, {
+            method : 'post',
+            // headers: {
+            //     'Accept': 'application/json',
+            //     'Content-Type': 'application/json'
+            // },
+
+            body: JSON.stringify({
+                maker_id : maker_id
+            }),
+        });
+        return response.json();
+    }
+
+    makerSelect.addEventListener('change',   (event) => {
+        getData(event).then(data => {
+            var result = Object.keys(data).map((key) => [String(key), data[key]]);
+            // console.log(result)
+            modelSelect.innerHTML='';
+            result.forEach(function (item) {
+                console.log("item = ", item)
+                var newOption = document.createElement("option");
+                newOption.text = item[0].toString();//item.whateverProperty
+                newOption.value = item[1].toString();
+
+                modelSelect.add(newOption);
+            });
+            //new select items should populated immediately
+        });
     })
+        // console.log(hpAction, hpMethod);
+
 </script>
 {% endblock %}
