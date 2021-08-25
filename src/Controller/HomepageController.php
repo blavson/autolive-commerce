@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Maker;
 use App\Form\HomepageFormType;
+use App\Repository\CarRepository;
 use App\Repository\MakerRepository;
 use App\Repository\ModelRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,23 +19,17 @@ class HomepageController extends AbstractController
     /**
      * @Route("/homepage", name="homepage")
      */
-    public function index( Request $request, MakerRepository $makerRepository): Response  {
+    public function index( Request $request, MakerRepository $makerRepository, CarRepository $carRepository): Response  {
       $myform = $this->createForm(HomepageFormType::class);
-      $carItems = [];
+      $carItems =[];
       $myform->handleRequest($request);
-        if ($myform->isSubmitted() ) {
-            dd($request);
-        }
-        if ($request->isMethod('post')) {
-            $req = $request->toArray();
-            $maker_id = $req['maker_id'];
-            $maker = $makerRepository->find(['id' => $maker_id]);
-            $models =  $maker->getModels()->toArray();
-            foreach ($models as $m)
-                $marray[$m->getModel()] = $m->getId();
-            return new Response(json_encode($marray));
-        }
 
+        if ($myform->isSubmitted() && $myform->isValid()) {
+//            dd($request);
+            $car_maker = $request->request->get('homepage_form')['car_makers'];
+            $car_model = $request->request->get('homepage_form')['car_models'];
+            $carItems = $carRepository->findBy(['maker' => $car_maker, 'model' => $car_model]);
+        }
 
         return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'carItems' => $carItems]);
     }
@@ -48,4 +44,18 @@ class HomepageController extends AbstractController
         dd($marray);
     }
 
+
+    /**
+     * @Route("/get_models_by_maker", name="get_models_by_maker")
+     */
+
+    public function modelsByMaker(Request $request, ModelRepository $modelRepository) : JsonResponse {
+        $maker_id = $request->query->get('maker_id');
+        $models = $modelRepository->findBy(['maker' => $maker_id]);
+        $mArray = [];
+        foreach ($models as $m) {
+            $mArray[$m->getModel()] = $m->getId();
+        }
+        return new JsonResponse($mArray);
+    }
 }

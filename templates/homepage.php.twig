@@ -1,13 +1,18 @@
 {%  extends "base.html.twig" %}
 {% block body %}
- {{ form(myform) }}
-{#    <select class="form-select" aria-label="Default select example">#}
-{#        <option selected>Car Makers</option>#}
+    <div class="row mt-4">
+        <div class="col-md-3">
+            {{ form(myform) }}
+        </div>
+        <div class="col-md-9">
 
-{#    {% for maker in makers %}#}
-{#        <option value={{ maker.getId() }}>{{ maker.getMaker() }}</option>#}
-{#    {%  endfor %}#}
-{#    </select>#}
+        </div>
+    </div>
+
+    {% for car in carItems %}
+        <p>{{ car.getMileage() }} {{ car.getPrice() }}</p>
+    {%  endfor %}
+    </select>
 {%  endblock %}
 
 {% block bottomscript %}
@@ -15,30 +20,18 @@
     let makerSelect = document.homepage_form.homepage_form_car_makers;
     let modelSelect = document.homepage_form.homepage_form_car_models;
 
-      getData =async (event) => {
-          let maker_id = event.target.value;
-          let hpForm = document.homepage_form;
-          let hpAction = hpForm.action;
-          let hpMethod = hpForm.method;
+    makerSelect.addEventListener('change',   async (event) => {
+        let maker_id = event.target.value;
+        console.log(maker_id)
+        const response = await fetch('http://localhost:8000/get_models_by_maker?maker_id=' + maker_id,
+            {#fetch("{{ path('get_models_by_maker') }}",#}
+            {
 
+            } )
+            .then(response => response.json())
+        console.log(response);
 
-        const response = await fetch(hpAction, {
-            method : 'post',
-            // headers: {
-            //     'Accept': 'application/json',
-            //     'Content-Type': 'application/json'
-            // },
-
-            body: JSON.stringify({
-                maker_id : maker_id
-            }),
-        });
-        return response.json();
-    }
-
-    makerSelect.addEventListener('change',   (event) => {
-        getData(event).then(data => {
-            var result = Object.keys(data).map((key) => [String(key), data[key]]);
+            var result = Object.keys(response).map((key) => [String(key), response[key]]);
             // console.log(result)
             modelSelect.innerHTML='';
             result.forEach(function (item) {
@@ -46,11 +39,11 @@
                 var newOption = document.createElement("option");
                 newOption.text = item[0].toString();//item.whateverProperty
                 newOption.value = item[1].toString();
-
                 modelSelect.add(newOption);
             });
             //new select items should populated immediately
-        });
+        return response;
+
     })
         // console.log(hpAction, hpMethod);
 

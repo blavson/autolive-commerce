@@ -93,14 +93,14 @@ class Car
         return $this;
     }
 
-    public function getMilage(): ?string
+    public function getMileage(): ?string
     {
-        return $this->milage;
+        return $this->mileage;
     }
 
-    public function setMilage(?string $milage): self
+    public function setMileage(?string $mileage): self
     {
-        $this->milage = $milage;
+        $this->mileage = $mileage;
 
         return $this;
     }

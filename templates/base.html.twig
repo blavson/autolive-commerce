@@ -10,8 +10,9 @@
            and uncomment the following Encore helpers to start using Symfony UX #}
     </head>
     <body>
-        <div class="container">
 
+        <div class="container">
+       {% include "navbar.php.twig" %}
 
         {% block body %}{% endblock %}
         {% block bottomscript %} {% endblock %}
