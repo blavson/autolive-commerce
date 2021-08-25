@@ -8,11 +8,11 @@
 
         </div>
     </div>
-
-    {% for car in carItems %}
-        <p>{{ car.getMileage() }} {{ car.getPrice() }}</p>
+    {% if cars is not empty %}
+    {% for car in cars %}
+        <p>{{ car.getMileage() }} {{ car.getPrice() }} {{  car.getDescription() }}</p>
     {%  endfor %}
-    </select>
+    {%  endif %}
 {%  endblock %}
 
 {% block bottomscript %}

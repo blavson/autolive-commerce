@@ -99,6 +99,7 @@ class Maker
     }
 
     public function __toString() {
-        return $this->getMaker();
+        return $this->maker;
     }
+
 }

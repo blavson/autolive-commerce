@@ -2,17 +2,19 @@
 
 namespace App\Form;
 
+use App\Entity\Car;
 use App\Entity\Maker;
 use App\Entity\Model;
 use App\Repository\CarRepository;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HomepageFormType extends AbstractType {
@@ -32,11 +34,13 @@ class HomepageFormType extends AbstractType {
                 'class' => 'form-control'
             ]
         ]);
-        $builder->add('car_models', ChoiceType::class, [
-//            'class' => Model::class,
+        $builder->add('car_models', EntityType::class, [
+            'class' => Model::class,
             'placeholder' => 'Car Models',
+            'required'=> false,
             'attr' => [
-                'class' => 'form-control'
+                'class' => 'form-control',
+
             ]
         ]);
         $builder->add('search', SubmitType::class, [
@@ -44,7 +48,7 @@ class HomepageFormType extends AbstractType {
                     'class' => 'btn btn-primary',
                 ]
         ]);
-//        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
 //        $builder->addEventListener(
 //            FormEvents::PRE_SET_DATA,
@@ -57,24 +61,35 @@ class HomepageFormType extends AbstractType {
 
     }
 
+
+
     function onPresetData(FormEvent $event) {
-        if (!empty($event->getData()))
-            dd($event->getData());
+        $data = $event->getData();
+        $form = $event->getForm();
+        if (!empty($data))
+            dd(__function__, $data);
+
     }
+
+
 
     function onPreSubmit(FormEvent $event) {
         $data = $event->getData();
+        $form = $event->getForm();
+//        if (!empty($data))
+//            dd(__function__, $data);
 
-        $car_makers = $data['car_makers'];
-        $car_models = $data['car_models'];
-        $cars = $this->carRepository->createQueryBuilder('query')
-                ->where("query.maker = :car_maker")
-            ->andWhere("query.model = :car_model")
-            ->setParameter('car_maker', $car_makers)
-            ->setParameter('car_model', $car_models)
-            ->getQuery()
-            ->execute();
-        dd($cars);
+//        $car_makers = $data['car_makers'];
+//        $car_models = $data['car_models'];
+//        $cars = $this->carRepository->createQueryBuilder('query')
+//                ->where("query.maker = :car_maker")
+//            ->andWhere("query.model = :car_model")
+//            ->setParameter('car_maker', $car_makers)
+//            ->setParameter('car_model', $car_models)
+//            ->getQuery()
+//            ->getResult();
+//            $form->setData(['cars'=> $cars]);
+//        return new Response($cars);
 
     }
 

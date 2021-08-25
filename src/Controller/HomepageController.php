@@ -21,17 +21,16 @@ class HomepageController extends AbstractController
      */
     public function index( Request $request, MakerRepository $makerRepository, CarRepository $carRepository): Response  {
       $myform = $this->createForm(HomepageFormType::class);
-      $carItems =[];
+      $cars =[];
       $myform->handleRequest($request);
-
-        if ($myform->isSubmitted() && $myform->isValid()) {
-//            dd($request);
+//
+        if ($myform->isSubmitted()) {
             $car_maker = $request->request->get('homepage_form')['car_makers'];
             $car_model = $request->request->get('homepage_form')['car_models'];
-            $carItems = $carRepository->findBy(['maker' => $car_maker, 'model' => $car_model]);
+            $cars = $carRepository->findBy(['maker' => $car_maker, 'model' => $car_model]);
         }
 
-        return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'carItems' => $carItems]);
+        return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => $cars]);
     }
 
     /**
