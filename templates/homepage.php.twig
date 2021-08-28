@@ -5,14 +5,12 @@
             {{ form(myform) }}
         </div>
         <div class="col-md-9">
-
+                {% for car in cars %}
+                    <p>{{ car.getMileage() }} {{ car.getPrice() }} {{  car.getDescription() }}</p>
+                {%  endfor %}
         </div>
     </div>
-    {% if cars is not empty %}
-    {% for car in cars %}
-        <p>{{ car.getMileage() }} {{ car.getPrice() }} {{  car.getDescription() }}</p>
-    {%  endfor %}
-    {%  endif %}
+
 {%  endblock %}
 
 {% block bottomscript %}

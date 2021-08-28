@@ -7,6 +7,7 @@ use App\Form\HomepageFormType;
 use App\Repository\CarRepository;
 use App\Repository\MakerRepository;
 use App\Repository\ModelRepository;
+use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,16 +22,23 @@ class HomepageController extends AbstractController
      */
     public function index( Request $request, MakerRepository $makerRepository, CarRepository $carRepository): Response  {
       $myform = $this->createForm(HomepageFormType::class);
-      $cars =[];
       $myform->handleRequest($request);
-//
+      $cars = [];
         if ($myform->isSubmitted()) {
             $car_maker = $request->request->get('homepage_form')['car_makers'];
             $car_model = $request->request->get('homepage_form')['car_models'];
-            $cars = $carRepository->findBy(['maker' => $car_maker, 'model' => $car_model]);
+            $cars = $carRepository->createQueryBuilder('q')
+                ->where('q.maker = :car_maker')
+                ->andWhere('q.model = :car_model')
+                ->setParameter('car_maker', $car_maker)
+                ->setParameter('car_model', $car_model)
+                ->getQuery()
+//                ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult();
+//    dd($cars);
+            return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => $cars  ]);
         }
-
-        return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => $cars]);
+        return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => []  ]);
     }
 
     /**
@@ -40,7 +48,6 @@ class HomepageController extends AbstractController
     public function justText(Request $request, MakerRepository $makerRepository) {
         $maker = $makerRepository->find(['id' => 92]);
         $marray = $maker->getModels()->toArray();
-        dd($marray);
     }
 
 

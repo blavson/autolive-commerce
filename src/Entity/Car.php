@@ -141,7 +141,8 @@ class Car
         return $this;
     }
 
-    public function __toString() {
-        return $this->getMaker();
+    public function __toString(): ?string {
+        return "JustModel";
     }
 }
+
