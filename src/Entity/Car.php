@@ -17,15 +17,6 @@ class Car
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $maker;
-
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $model;
 
     /**
      * @ORM\Column(type="date")
@@ -52,34 +43,34 @@ class Car
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Model::class, inversedBy="cars")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $model;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $model_id;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $maker_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Model::class, inversedBy="cars")
+     * @ORM\JoinColumn(nullable=false)
+     */
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMaker(): ?string
-    {
-        return $this->maker;
-    }
 
-    public function setMaker(string $maker): self
-    {
-        $this->maker = $maker;
 
-        return $this;
-    }
-
-    public function getModel(): ?string
-    {
-        return $this->model;
-    }
-
-    public function setModel(string $model): self
-    {
-        $this->model = $model;
-
-        return $this;
-    }
 
     public function getReleaseDate(): ?\DateTimeInterface
     {
@@ -143,6 +134,42 @@ class Car
 
     public function __toString(): ?string {
         return "JustModel";
+    }
+
+    public function getModel(): ?Model
+    {
+        return $this->model;
+    }
+
+    public function setModel(?Model $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    public function getModelId(): ?int
+    {
+        return $this->model_id;
+    }
+
+    public function setModelId(int $model_id): self
+    {
+        $this->model_id = $model_id;
+
+        return $this;
+    }
+
+    public function getMakerId(): ?int
+    {
+        return $this->maker_id;
+    }
+
+    public function setMakerId(int $maker_id): self
+    {
+        $this->maker_id = $maker_id;
+
+        return $this;
     }
 }
 

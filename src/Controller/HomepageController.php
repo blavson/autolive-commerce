@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Car;
 use App\Entity\Maker;
+use App\Entity\Model;
 use App\Form\HomepageFormType;
 use App\Repository\CarRepository;
 use App\Repository\MakerRepository;
@@ -20,34 +22,33 @@ class HomepageController extends AbstractController
     /**
      * @Route("/homepage", name="homepage")
      */
-    public function index( Request $request, MakerRepository $makerRepository, CarRepository $carRepository): Response  {
+    public function index( Request $request, MakerRepository $makerRepository ,CarRepository $carRepository): Response  {
       $myform = $this->createForm(HomepageFormType::class);
       $myform->handleRequest($request);
-      $cars = [];
+      $cars = $carRepository->findBy([],['release_date' => 'desc'], 10, 0);
+//      dd($request, $cars);
+
+//        $cars = $carRepository->createQueryBuilder('car')
+//            ->leftJoin(Model::class, 'model', Query\Expr\Join::WITH , 'car.model = model.id')
+//            ->orderBy('car.release_date', 'desc')
+//            ->getQuery()
+//            ->getResult();
+//        dd($cars);
         if ($myform->isSubmitted()) {
-            $car_maker = $request->request->get('homepage_form')['car_makers'];
-            $car_model = $request->request->get('homepage_form')['car_models'];
-            $cars = $carRepository->createQueryBuilder('q')
-                ->where('q.maker = :car_maker')
-                ->andWhere('q.model = :car_model')
-                ->setParameter('car_maker', $car_maker)
-                ->setParameter('car_model', $car_model)
-                ->getQuery()
-//                ->getResult(Query::HYDRATE_ARRAY);
-            ->getResult();
-//    dd($cars);
-            return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => $cars  ]);
+            $maker_id = $request->request->get('homepage_form')['car_makers'];
+            $model_id = $request->request->get('homepage_form')['car_models'];
+
+//            dd($maker_id, $model_id);
+            $query = $carRepository->createQueryBuilder('q')
+                ->where('q.maker_id = :maker_id')
+                ->setParameter('maker_id', $maker_id);
+            if ($model_id) {
+                $query->andWhere('q.model_id = :model_id');
+                $query->setParameter('model_id', $model_id);
+            }
+            $cars = $query->getQuery()->getResult();
         }
-        return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => []  ]);
-    }
-
-    /**
-     * @Route("/test", name="test")
-     */
-
-    public function justText(Request $request, MakerRepository $makerRepository) {
-        $maker = $makerRepository->find(['id' => 92]);
-        $marray = $maker->getModels()->toArray();
+            return $this->render('homepage.php.twig', ['myform' => $myform->createView(), 'cars' => $cars  ]);
     }
 
 
@@ -55,9 +56,10 @@ class HomepageController extends AbstractController
      * @Route("/get_models_by_maker", name="get_models_by_maker")
      */
 
-    public function modelsByMaker(Request $request, ModelRepository $modelRepository) : JsonResponse {
+    public function modelsByMaker(Request $request, MakerRepository $makerRepository) : JsonResponse {
         $maker_id = $request->query->get('maker_id');
-        $models = $modelRepository->findBy(['maker' => $maker_id]);
+        $models = $makerRepository->find(['id' =>$maker_id])->getModels();
+
         $mArray = [];
         foreach ($models as $m) {
             $mArray[$m->getModel()] = $m->getId();

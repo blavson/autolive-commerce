@@ -5,9 +5,27 @@
             {{ form(myform) }}
         </div>
         <div class="col-md-9">
+            <div class="row">
                 {% for car in cars %}
-                    <p>{{ car.getMileage() }} {{ car.getPrice() }} {{  car.getDescription() }}</p>
+                                        <p>{{ car.getMileage() }} {{ car.getPrice() }} {{  car.getDescription() }}</p>
+                    <div class="col-md-4">
+
+                        <div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="{{ car.getImage() }}" alt="car model">
+                            <div class="card-body">
+                                <h5 class="card-title">{{  car.getModel() }}</h5>
+                                <p class="card-text">{{  car.getDescription() }}</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Price : {{ car.getPrice() }}</li>
+                                <li class="list-group-item">Mileage : {{ car.getMileage() }}</li>
+                            </ul>
+                        </div>
+
+                    </div>
                 {%  endfor %}
+
+            </div>
         </div>
     </div>
 
@@ -20,21 +38,19 @@
 
     makerSelect.addEventListener('change',   async (event) => {
         let maker_id = event.target.value;
-        console.log(maker_id)
-        const response = await fetch('http://localhost:8000/get_models_by_maker?maker_id=' + maker_id,
-            {#fetch("{{ path('get_models_by_maker') }}",#}
-            {
+        const response = await fetch('http://localhost:8000/get_models_by_maker?maker_id=' + maker_id, { } )
+             .then(response => response.json())
 
-            } )
-            .then(response => response.json())
-        console.log(response);
-
-            var result = Object.keys(response).map((key) => [String(key), response[key]]);
+            let result = Object.keys(response).map((key) => [String(key), response[key]]);
             // console.log(result)
             modelSelect.innerHTML='';
+            let allmodels = document.createElement("option");
+            allmodels.text ="All Models";//item.whateverProperty
+            allmodels.value = 0;
+            modelSelect.add(allmodels);
             result.forEach(function (item) {
                 console.log("item = ", item)
-                var newOption = document.createElement("option");
+                let newOption = document.createElement("option");
                 newOption.text = item[0].toString();//item.whateverProperty
                 newOption.value = item[1].toString();
                 modelSelect.add(newOption);

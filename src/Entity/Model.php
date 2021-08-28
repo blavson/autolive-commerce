@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ModelRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +29,20 @@ class Model
      */
     private $maker;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Car::class, mappedBy="model", orphanRemoval=false)
+     */
+    private $cars;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Car::class, mappedBy="model", orphanRemoval=true)
+     */
+
+    public function __construct()
+    {
+        $this->cars = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -36,6 +52,7 @@ class Model
     {
         return $this->model;
     }
+
 
     public function setModel(string $model): self
     {
@@ -59,4 +76,36 @@ class Model
     public function __toString() {
         return $this->model;
     }
+
+    /**
+     * @return Collection|car[]
+     */
+    public function getCars(): Collection
+    {
+        return $this->cars;
+    }
+
+    public function addCar(car $car): self
+    {
+        if (!$this->cars->contains($car)) {
+            $this->cars[] = $car;
+            $car->setModel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCar(car $car): self
+    {
+        if ($this->cars->removeElement($car)) {
+            // set the owning side to null (unless already changed)
+            if ($car->getModel() === $this) {
+                $car->setModel(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

@@ -1,3 +1,4 @@
+INSERT INTO maker(maker, country) values
 ('Abarth','Italy'),
 ('Acura','Japan'),
 ('Alfa Romeo','Italy'),
