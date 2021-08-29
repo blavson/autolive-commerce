@@ -7,10 +7,9 @@
         <div class="col-md-9">
             <div class="row">
                 {% for car in cars %}
-                                        <p>{{ car.getMileage() }} {{ car.getPrice() }} {{  car.getDescription() }}</p>
                     <div class="col-md-4">
 
-                        <div class="card" style="width: 18rem;">
+                            <div class="card" style="width: 18rem;">
                             <img class="card-img-top" src="{{ car.getImage() }}" alt="car model">
                             <div class="card-body">
                                 <h5 class="card-title">{{  car.getModel() }}</h5>
