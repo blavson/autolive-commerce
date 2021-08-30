@@ -30,9 +30,10 @@ class Maker
     private $country;
 
     /**
-     * @ORM\OneToMany(targetEntity=Model::class, mappedBy="maker")
+     * @ORM\OneToMany(targetEntity=Model::class, mappedBy="makers", orphanRemoval=true)
      */
     private $models;
+
 
     public function __construct()
     {
@@ -68,6 +69,11 @@ class Maker
         return $this;
     }
 
+
+    public function __toString() {
+        return $this->maker;
+    }
+
     /**
      * @return Collection|Model[]
      */
@@ -80,7 +86,7 @@ class Maker
     {
         if (!$this->models->contains($model)) {
             $this->models[] = $model;
-            $model->setMaker($this);
+            $model->setMakers($this);
         }
 
         return $this;
@@ -90,16 +96,12 @@ class Maker
     {
         if ($this->models->removeElement($model)) {
             // set the owning side to null (unless already changed)
-            if ($model->getMaker() === $this) {
-                $model->setMaker(null);
+            if ($model->getMakers() === $this) {
+                $model->setMakers(null);
             }
         }
 
         return $this;
-    }
-
-    public function __toString() {
-        return $this->maker;
     }
 
 }

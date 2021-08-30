@@ -24,15 +24,17 @@ class Model
      */
     private $model;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Maker::class, inversedBy="models")
-     */
-    private $maker;
 
     /**
      * @ORM\OneToMany(targetEntity=Car::class, mappedBy="model", orphanRemoval=false)
      */
     private $cars;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Maker::class, inversedBy="models")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $makers;
 
     /**
      * @ORM\OneToMany(targetEntity=Car::class, mappedBy="model", orphanRemoval=true)
@@ -103,6 +105,18 @@ class Model
                 $car->setModel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMakers(): ?Maker
+    {
+        return $this->makers;
+    }
+
+    public function setMakers(?Maker $makers): self
+    {
+        $this->makers = $makers;
 
         return $this;
     }

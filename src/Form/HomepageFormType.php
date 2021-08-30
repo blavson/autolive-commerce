@@ -26,20 +26,20 @@ class HomepageFormType extends AbstractType {
     {
         $builder->add('car_makers', EntityType::class, [
             'class' => Maker::class,
-            'placeholder' => 'Car Makers',
+            'placeholder' => 'Car Maker',
             'attr' => [
                 'class' => 'form-control'
             ]
         ]);
         $m['All models'] = 0;
         $builder->add('car_models', ChoiceType::class, [
-//            'placeholder' => 'Car Models',
+//            'placeholder' => 'Car Model',
 //            'class' => Model::class,
                 'attr' => [
                     'class' => 'form-control'
                 ],
 //                'choices' => [
-//                    'All Models' => 0
+//                    'All Model' => 0
 //                    ]
             ]
 
@@ -59,7 +59,7 @@ class HomepageFormType extends AbstractType {
         $form->add('car_makers', EntityType::class, [
             'required' => true,
             'data' => $maker,
-            'placeholder' => 'Car Makers',
+            'placeholder' => 'Car Maker',
             'class' => Maker::class,
             'attr' => [
                 'class' => 'form-control'
@@ -69,13 +69,13 @@ class HomepageFormType extends AbstractType {
         $m = [];
         if (!is_null($maker)) {
             $models = $this->makerRepository->findOneBy(['id' => $maker->getId()])->getModels();
-            $m['All Models'] = 0;
+            $m['All Model'] = 0;
             foreach ($models as $model) {
                 $m[$model->getModel()] = $model->getId();
             }
         }
         $form->add('car_models', ChoiceType::class, [
-//            'placeholder' => 'Car Models',
+//            'placeholder' => 'Car Model',
 //            'class' => Model::class,
             'attr' => [
                         'class' => 'form-control'

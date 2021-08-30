@@ -1,0 +1,10 @@
+{%  extends "base.html.twig" %}
+{% block body %}
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <img src="/{{ car.getImage() }}" alt="car image">
+        </div>
+        {{ car.getImage() }}
+    </div>
+    {{ car.getPrice() }}
+{%  endblock %}
